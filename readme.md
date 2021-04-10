@@ -22,6 +22,10 @@ O projeto está configurado com um [Makefile](https://www.gnu.org/software/make/
 
    - Executa `make db` e `make app`
 
+- **make create_network**
+
+    - Cria a rede a ser compartilhada entre as stacks do banco de dados e MS
+
 - **make app**
     - Executa os MS simulando ambiente produtivo
 

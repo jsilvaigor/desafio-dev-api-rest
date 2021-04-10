@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+    postgres:
+        image: postgres
+        restart: unless-stopped
+        env_file:
+            - database.env
+        ports:
+            - "5432:5432"
+        volumes:
+            - database:/var/lib/postgresql/data/
+            - ./001-CreateStructure.sql:/docker-entrypoint-initdb.d/001-CreateSctructure.sql
+        networks:
+            - mini_bank
+
+networks:
+    mini_bank:
+        external:
+            name: mini_bank_network
+
+
+volumes:
+    database:
+
+
