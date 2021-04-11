@@ -5,7 +5,7 @@
 -- Dumped from database version 13.2 (Debian 13.2-1.pgdg100+1)
 -- Dumped by pg_dump version 13.2
 
--- Started on 2021-04-11 16:14:08 -03
+-- Started on 2021-04-11 16:46:04 -03
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -35,15 +35,15 @@ CREATE ROLE ms_mini_bank WITH
   ENCRYPTED PASSWORD 'md53f42bc9e98fb94a78ee76f122eaf5571';
 
 --
--- TOC entry 200 (class 1259 OID 16387)
+-- TOC entry 200 (class 1259 OID 16386)
 -- Name: contas; Type: TABLE; Schema: public; Owner: master_user
 --
 
 CREATE TABLE public.contas (
     "idConta" integer NOT NULL,
     "idPessoa" integer NOT NULL,
-    saldo money DEFAULT 0,
-    "limiteSaqueDiario" money DEFAULT 0,
+    saldo numeric(16,2) DEFAULT 0,
+    "limiteSaqueDiario" numeric(16,2) DEFAULT 0,
     "flagAtivo" boolean DEFAULT true NOT NULL,
     "tipoConta" integer NOT NULL,
     "dataCriacao" date DEFAULT CURRENT_DATE NOT NULL
@@ -53,7 +53,7 @@ CREATE TABLE public.contas (
 ALTER TABLE public.contas OWNER TO master_user;
 
 --
--- TOC entry 201 (class 1259 OID 16394)
+-- TOC entry 201 (class 1259 OID 16393)
 -- Name: contas_idConta_seq; Type: SEQUENCE; Schema: public; Owner: master_user
 --
 
@@ -69,7 +69,7 @@ CREATE SEQUENCE public."contas_idConta_seq"
 ALTER TABLE public."contas_idConta_seq" OWNER TO master_user;
 
 --
--- TOC entry 2970 (class 0 OID 0)
+-- TOC entry 2976 (class 0 OID 0)
 -- Dependencies: 201
 -- Name: contas_idConta_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: master_user
 --
@@ -78,7 +78,7 @@ ALTER SEQUENCE public."contas_idConta_seq" OWNED BY public.contas."idConta";
 
 
 --
--- TOC entry 202 (class 1259 OID 16396)
+-- TOC entry 202 (class 1259 OID 16395)
 -- Name: pessoas; Type: TABLE; Schema: public; Owner: master_user
 --
 
@@ -94,7 +94,7 @@ CREATE TABLE public.pessoas (
 ALTER TABLE public.pessoas OWNER TO master_user;
 
 --
--- TOC entry 203 (class 1259 OID 16402)
+-- TOC entry 203 (class 1259 OID 16401)
 -- Name: pessoas_idPessoa_seq; Type: SEQUENCE; Schema: public; Owner: master_user
 --
 
@@ -110,7 +110,7 @@ CREATE SEQUENCE public."pessoas_idPessoa_seq"
 ALTER TABLE public."pessoas_idPessoa_seq" OWNER TO master_user;
 
 --
--- TOC entry 2972 (class 0 OID 0)
+-- TOC entry 2979 (class 0 OID 0)
 -- Dependencies: 203
 -- Name: pessoas_idPessoa_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: master_user
 --
@@ -119,14 +119,14 @@ ALTER SEQUENCE public."pessoas_idPessoa_seq" OWNED BY public.pessoas."idPessoa";
 
 
 --
--- TOC entry 204 (class 1259 OID 16404)
+-- TOC entry 204 (class 1259 OID 16403)
 -- Name: transacoes; Type: TABLE; Schema: public; Owner: master_user
 --
 
 CREATE TABLE public.transacoes (
     "idTransacao" integer NOT NULL,
     "idConta" integer NOT NULL,
-    valor money NOT NULL,
+    valor numeric(16,2) NOT NULL,
     "dataTransacao" date DEFAULT CURRENT_DATE NOT NULL
 );
 
@@ -134,7 +134,7 @@ CREATE TABLE public.transacoes (
 ALTER TABLE public.transacoes OWNER TO master_user;
 
 --
--- TOC entry 205 (class 1259 OID 16408)
+-- TOC entry 205 (class 1259 OID 16407)
 -- Name: transacoes_idTransacao_seq; Type: SEQUENCE; Schema: public; Owner: master_user
 --
 
@@ -150,7 +150,7 @@ CREATE SEQUENCE public."transacoes_idTransacao_seq"
 ALTER TABLE public."transacoes_idTransacao_seq" OWNER TO master_user;
 
 --
--- TOC entry 2974 (class 0 OID 0)
+-- TOC entry 2982 (class 0 OID 0)
 -- Dependencies: 205
 -- Name: transacoes_idTransacao_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: master_user
 --
@@ -159,7 +159,7 @@ ALTER SEQUENCE public."transacoes_idTransacao_seq" OWNED BY public.transacoes."i
 
 
 --
--- TOC entry 2820 (class 2604 OID 16410)
+-- TOC entry 2820 (class 2604 OID 16409)
 -- Name: contas idConta; Type: DEFAULT; Schema: public; Owner: master_user
 --
 
@@ -167,7 +167,7 @@ ALTER TABLE ONLY public.contas ALTER COLUMN "idConta" SET DEFAULT nextval('publi
 
 
 --
--- TOC entry 2821 (class 2604 OID 16411)
+-- TOC entry 2821 (class 2604 OID 16410)
 -- Name: pessoas idPessoa; Type: DEFAULT; Schema: public; Owner: master_user
 --
 
@@ -175,7 +175,7 @@ ALTER TABLE ONLY public.pessoas ALTER COLUMN "idPessoa" SET DEFAULT nextval('pub
 
 
 --
--- TOC entry 2823 (class 2604 OID 16412)
+-- TOC entry 2823 (class 2604 OID 16411)
 -- Name: transacoes idTransacao; Type: DEFAULT; Schema: public; Owner: master_user
 --
 
@@ -183,7 +183,65 @@ ALTER TABLE ONLY public.transacoes ALTER COLUMN "idTransacao" SET DEFAULT nextva
 
 
 --
--- TOC entry 2825 (class 2606 OID 16414)
+-- TOC entry 2964 (class 0 OID 16386)
+-- Dependencies: 200
+-- Data for Name: contas; Type: TABLE DATA; Schema: public; Owner: master_user
+--
+
+COPY public.contas ("idConta", "idPessoa", saldo, "limiteSaqueDiario", "flagAtivo", "tipoConta", "dataCriacao") FROM stdin;
+\.
+
+
+--
+-- TOC entry 2966 (class 0 OID 16395)
+-- Dependencies: 202
+-- Data for Name: pessoas; Type: TABLE DATA; Schema: public; Owner: master_user
+--
+
+COPY public.pessoas ("idPessoa", nome, cpf, "dataNascimento", senha) FROM stdin;
+1	user 2	123456789	2021-04-11	$2b$10$Sy1xGUNLqToYn.Y9C.wFsuiE86do9ifS/SwiinTMRUCJQ9AH2Za3a
+\.
+
+
+--
+-- TOC entry 2968 (class 0 OID 16403)
+-- Dependencies: 204
+-- Data for Name: transacoes; Type: TABLE DATA; Schema: public; Owner: master_user
+--
+
+COPY public.transacoes ("idTransacao", "idConta", valor, "dataTransacao") FROM stdin;
+\.
+
+
+--
+-- TOC entry 2984 (class 0 OID 0)
+-- Dependencies: 201
+-- Name: contas_idConta_seq; Type: SEQUENCE SET; Schema: public; Owner: master_user
+--
+
+SELECT pg_catalog.setval('public."contas_idConta_seq"', 1, false);
+
+
+--
+-- TOC entry 2985 (class 0 OID 0)
+-- Dependencies: 203
+-- Name: pessoas_idPessoa_seq; Type: SEQUENCE SET; Schema: public; Owner: master_user
+--
+
+SELECT pg_catalog.setval('public."pessoas_idPessoa_seq"', 1, true);
+
+
+--
+-- TOC entry 2986 (class 0 OID 0)
+-- Dependencies: 205
+-- Name: transacoes_idTransacao_seq; Type: SEQUENCE SET; Schema: public; Owner: master_user
+--
+
+SELECT pg_catalog.setval('public."transacoes_idTransacao_seq"', 1, false);
+
+
+--
+-- TOC entry 2825 (class 2606 OID 16413)
 -- Name: contas contas_pkey; Type: CONSTRAINT; Schema: public; Owner: master_user
 --
 
@@ -192,7 +250,7 @@ ALTER TABLE ONLY public.contas
 
 
 --
--- TOC entry 2827 (class 2606 OID 16416)
+-- TOC entry 2827 (class 2606 OID 16415)
 -- Name: pessoas pessoas_pkey; Type: CONSTRAINT; Schema: public; Owner: master_user
 --
 
@@ -201,7 +259,7 @@ ALTER TABLE ONLY public.pessoas
 
 
 --
--- TOC entry 2831 (class 2606 OID 16418)
+-- TOC entry 2831 (class 2606 OID 16417)
 -- Name: transacoes transacoes_pkey; Type: CONSTRAINT; Schema: public; Owner: master_user
 --
 
@@ -210,7 +268,7 @@ ALTER TABLE ONLY public.transacoes
 
 
 --
--- TOC entry 2829 (class 2606 OID 16420)
+-- TOC entry 2829 (class 2606 OID 16419)
 -- Name: pessoas unique_cpf; Type: CONSTRAINT; Schema: public; Owner: master_user
 --
 
@@ -219,7 +277,7 @@ ALTER TABLE ONLY public.pessoas
 
 
 --
--- TOC entry 2833 (class 2606 OID 16421)
+-- TOC entry 2833 (class 2606 OID 16420)
 -- Name: transacoes conta_transacao; Type: FK CONSTRAINT; Schema: public; Owner: master_user
 --
 
@@ -228,7 +286,7 @@ ALTER TABLE ONLY public.transacoes
 
 
 --
--- TOC entry 2832 (class 2606 OID 16426)
+-- TOC entry 2832 (class 2606 OID 16425)
 -- Name: contas pessoa_conta; Type: FK CONSTRAINT; Schema: public; Owner: master_user
 --
 
@@ -237,7 +295,7 @@ ALTER TABLE ONLY public.contas
 
 
 --
--- TOC entry 2969 (class 0 OID 0)
+-- TOC entry 2975 (class 0 OID 0)
 -- Dependencies: 200
 -- Name: TABLE contas; Type: ACL; Schema: public; Owner: master_user
 --
@@ -246,7 +304,16 @@ GRANT SELECT,INSERT,UPDATE ON TABLE public.contas TO ms_mini_bank;
 
 
 --
--- TOC entry 2971 (class 0 OID 0)
+-- TOC entry 2977 (class 0 OID 0)
+-- Dependencies: 201
+-- Name: SEQUENCE "contas_idConta_seq"; Type: ACL; Schema: public; Owner: master_user
+--
+
+GRANT ALL ON SEQUENCE public."contas_idConta_seq" TO ms_mini_bank;
+
+
+--
+-- TOC entry 2978 (class 0 OID 0)
 -- Dependencies: 202
 -- Name: TABLE pessoas; Type: ACL; Schema: public; Owner: master_user
 --
@@ -255,7 +322,16 @@ GRANT SELECT,INSERT,UPDATE ON TABLE public.pessoas TO ms_mini_bank;
 
 
 --
--- TOC entry 2973 (class 0 OID 0)
+-- TOC entry 2980 (class 0 OID 0)
+-- Dependencies: 203
+-- Name: SEQUENCE "pessoas_idPessoa_seq"; Type: ACL; Schema: public; Owner: master_user
+--
+
+GRANT ALL ON SEQUENCE public."pessoas_idPessoa_seq" TO ms_mini_bank;
+
+
+--
+-- TOC entry 2981 (class 0 OID 0)
 -- Dependencies: 204
 -- Name: TABLE transacoes; Type: ACL; Schema: public; Owner: master_user
 --
@@ -263,7 +339,16 @@ GRANT SELECT,INSERT,UPDATE ON TABLE public.pessoas TO ms_mini_bank;
 GRANT SELECT,INSERT,UPDATE ON TABLE public.transacoes TO ms_mini_bank;
 
 
--- Completed on 2021-04-11 16:14:08 -03
+--
+-- TOC entry 2983 (class 0 OID 0)
+-- Dependencies: 205
+-- Name: SEQUENCE "transacoes_idTransacao_seq"; Type: ACL; Schema: public; Owner: master_user
+--
+
+GRANT ALL ON SEQUENCE public."transacoes_idTransacao_seq" TO ms_mini_bank;
+
+
+-- Completed on 2021-04-11 16:46:04 -03
 
 --
 -- PostgreSQL database dump complete

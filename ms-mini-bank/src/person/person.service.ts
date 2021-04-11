@@ -10,7 +10,7 @@ export class PersonService {
   constructor(@InjectRepository(Person) private readonly personRepository: Repository<Person>) {}
 
   async findAll(): Promise<PersonDto[]> {
-    const person = await this.personRepository.find();
+    const person = await this.personRepository.find({ select: ['idPerson', 'cpf'] });
     return person.map((person) => {
       return {
         id: person.idPerson,
