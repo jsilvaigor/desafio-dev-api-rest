@@ -16,6 +16,7 @@ describe('Environment variables validation', () => {
       PGSQL_HOST: 'localhost',
       PGSQL_PORT: '5432',
       PGSQL_DATABASE: 'db',
+      SALTS_OR_ROUNDS: '10',
     };
   });
 
@@ -31,6 +32,7 @@ describe('Environment variables validation', () => {
       PGSQL_HOST: 'localhost',
       PGSQL_PORT: 5432,
       PGSQL_DATABASE: 'db',
+      SALTS_OR_ROUNDS: 10,
     };
     const validated = configureEnvironmentVars(envVars);
     expect(validated).toEqual(expected);

@@ -14,5 +14,5 @@ export class Person {
   birthDate: Date;
 
   @Column({ name: 'senha' })
-  password: number;
+  password: string;
 }
