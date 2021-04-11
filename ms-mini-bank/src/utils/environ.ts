@@ -31,8 +31,8 @@ export function configureEnvironmentVars(environment: Record<string, unknown>): 
     NODE_ENV: Joi.string().valid('dev', 'prod', 'test').default('dev'),
     LOG_LEVEL: Joi.string().valid('debug', 'info', 'warn', 'error').default('debug'),
     PORT: Joi.number().default(3000),
-    APPLICATION_PREFIX: Joi.string().default('/person/v1'),
-    APPLICATION: Joi.string().default('ms-person'),
+    APPLICATION_PREFIX: Joi.string().default('/mini-bank/v1'),
+    APPLICATION: Joi.string().default('ms-mini-bank'),
     ...PGSQL_VARS,
   });
 

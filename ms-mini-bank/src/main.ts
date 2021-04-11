@@ -12,10 +12,11 @@ async function bootstrap() {
   app.use(helmet());
   app.setGlobalPrefix(envVars.APPLICATION_PREFIX);
   const config = new DocumentBuilder()
-    .setTitle('MS Person')
-    .setDescription('Manage Persons')
+    .setTitle('MS Mini Bank')
+    .setDescription('Manage Persons and Accounts')
     .setVersion('1.0')
     .addTag('person')
+    .addTag('bankAccount')
     .addTag('health')
     .build();
   const document = SwaggerModule.createDocument(app, config);
