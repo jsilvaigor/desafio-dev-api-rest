@@ -5,6 +5,11 @@ export function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, envVars.SALTS_OR_ROUNDS);
 }
 
-export function checkPassword(password: string, hash: string): Promise<boolean> {
-  return bcrypt.compare(password, hash);
+export async function checkPassword(password: string, hash: string): Promise<boolean> {
+  try {
+    return await bcrypt.compare(password, hash);
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
 }

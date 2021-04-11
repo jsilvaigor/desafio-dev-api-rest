@@ -12,7 +12,10 @@ export class PersonService {
   async findAll(): Promise<PersonDto[]> {
     const person = await this.personRepository.find();
     return person.map((person) => {
-      return this.personEntityToDto(person);
+      return {
+        id: person.idPerson,
+        cpf: person.cpf,
+      } as PersonDto;
     });
   }
 

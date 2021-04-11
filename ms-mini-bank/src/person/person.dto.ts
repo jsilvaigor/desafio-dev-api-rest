@@ -1,11 +1,15 @@
 import { IsDateString, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export interface PersonDto {
+export class PersonDto {
+  @ApiProperty()
   id: number;
-  name: string;
+  @ApiProperty()
+  name?: string;
+  @ApiProperty()
   cpf: string;
-  birthDate: Date;
+  @ApiProperty()
+  birthDate?: Date;
 }
 
 export class PersonCreateDto {

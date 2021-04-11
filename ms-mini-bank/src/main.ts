@@ -18,9 +18,11 @@ async function bootstrap() {
     .setTitle('MS Mini Bank')
     .setDescription('Manage Persons and Accounts')
     .setVersion('1.0')
+    .addTag('login')
     .addTag('person')
     .addTag('bankAccount')
     .addTag('health')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);

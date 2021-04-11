@@ -18,6 +18,8 @@ export interface EnvVars {
   PGSQL_DATABASE: string;
 
   SALTS_OR_ROUNDS: number;
+
+  JWT_SECRET: string;
 }
 
 const PGSQL_VARS = {
@@ -37,6 +39,7 @@ export function configureEnvironmentVars(environment: Record<string, unknown>): 
     APPLICATION: Joi.string().default('ms-mini-bank'),
     ...PGSQL_VARS,
     SALTS_OR_ROUNDS: Joi.number().default(10),
+    JWT_SECRET: Joi.string().required(),
   });
 
   const { error, value: vars } = schema.validate(environment, {
