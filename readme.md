@@ -1,11 +1,7 @@
 ### Organização do projeto
-Nas instruções foi identificado dois escopos de dados **pessoa/usuário** e **conta bancária**, será criado um micro-serviço (MS) para cada escopo a fim de segregar os dados. A comunicação entre os dois se dará por meio de chamadas gRPC.
+Nas instruções foi identificado dois escopos de dados **pessoa/usuário** e **conta bancária**, será criado um micro-serviço (MS-Mini-Bank) que conterá internamente cada escopo a fim de segregar os dados.
 
-O **MS Person** ficará encarregado das operações referentes aos dados da pessoa e também da autenticação.
-
-o **MS BankAccount** ficará encarregado das  operações referentes a conta bancária.
-
-Abaixo segue um diagrama de alto nível exemplificando a comunicação entre os dois MS e o escopo dos dados.
+Abaixo segue um diagrama de alto nível exemplificando o escopo dos dados.
 
 ![Architecture Overview](img/architecture-overview.jpg)
 
@@ -27,19 +23,11 @@ O projeto está configurado com um [Makefile](https://www.gnu.org/software/make/
     - Cria a rede a ser compartilhada entre as stacks do banco de dados e MS
 
 - **make app**
-    - Executa os MS simulando ambiente produtivo
+    - Executa o MS simulando ambiente produtivo
 
 - **make db**
 
     - Cria a estrutura de banco de dados
-
-- **make seed**
-
-    - Insere dados "fakes" no banco para fins de teste
-
-- **make test**
-
-    - Executa os testes unitários dos dois MS
 
 - **make stop**
 

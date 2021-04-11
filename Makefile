@@ -1,4 +1,4 @@
-.PHONY: all app db seed test stress clean
+.PHONY: all create_netwotk app db clean
 
 all: db app
 
@@ -12,12 +12,6 @@ app: create_netwotk
 db: create_netwotk
 	@echo "Creating database"
 	./scripts/create_db.sh
-
-seed:
-	@echo "Insert test data"
-
-test:
-	@echo "Run tests"
 
 stop:
 	@echo "Stoping containers"
