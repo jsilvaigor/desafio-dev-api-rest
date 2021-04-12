@@ -9,6 +9,7 @@ import {
 } from './bank-account.dto';
 import { JwtAuthGuard } from '../login/jwt.guard';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiForbiddenResponse,
   ApiNoContentResponse,
@@ -83,11 +84,23 @@ export class BankAccountController {
 
   @Post(':account_id/deposit')
   @ApiOkResponse({ description: 'Account balance', type: BalanceDto })
+  @ApiBadRequestResponse({ description: 'Invalid amount value.' })
   createDepositTransaction(
     @Param('person_id') personId: number,
     @Param('account_id') accountId: number,
     @Body() transactionDto: CreateTransactionDto,
   ): Promise<BalanceDto> {
     return this.bankAccountService.createDepositTransaction(personId, accountId, transactionDto);
+  }
+
+  @Post(':account_id/withdraw')
+  @ApiOkResponse({ description: 'Account balance', type: BalanceDto })
+  @ApiBadRequestResponse({ description: 'Invalid amount value.' })
+  createWithdrawTransaction(
+    @Param('person_id') personId: number,
+    @Param('account_id') accountId: number,
+    @Body() transactionDto: CreateTransactionDto,
+  ): Promise<BalanceDto> {
+    return this.bankAccountService.createWithdrawTransaction(personId, accountId, transactionDto);
   }
 }

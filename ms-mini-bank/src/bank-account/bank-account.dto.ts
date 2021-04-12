@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BankAccountType } from '../model/bankAccount';
+import { IsNotEmpty, IsNumber, IsPositive } from 'class-validator';
 
 export class BankAccountDto {
   @ApiProperty()
@@ -23,9 +24,15 @@ export class BankAccountDto {
 
 export class CreateBankAccountDto {
   @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
   balance: number;
 
   @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
   dailyWithDrawLimit: number;
 
   @ApiProperty({ enum: BankAccountType })
@@ -51,5 +58,8 @@ export class TransactionDto {
 
 export class CreateTransactionDto {
   @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
   amount: number;
 }

@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BankAccount, BankAccountType } from '../model/bankAccount';
-import { getManager, Repository } from 'typeorm';
+import { getManager, MoreThanOrEqual, Repository } from "typeorm";
 import {
   BalanceDto,
   BankAccountDto,
@@ -10,10 +10,14 @@ import {
   TransactionDto,
 } from './bank-account.dto';
 import { AccountTransaction } from '../model/accountTransaction';
+import * as moment from 'moment';
 
 @Injectable()
 export class BankAccountService {
-  constructor(@InjectRepository(BankAccount) private readonly bankAccountRepository: Repository<BankAccount>) {}
+  constructor(
+    @InjectRepository(BankAccount) private readonly bankAccountRepository: Repository<BankAccount>,
+    @InjectRepository(AccountTransaction) private readonly accountTransactionRepository: Repository<AccountTransaction>,
+  ) {}
 
   async getAllAccountsForUser(personId: number): Promise<BankAccountDto[]> {
     const allAccounts = await this.bankAccountRepository.find({
@@ -30,15 +34,7 @@ export class BankAccountService {
   }
 
   async getAccountInfo(personId: number, accountId: number): Promise<BankAccountDto> {
-    const accountInfo = await this.bankAccountRepository.findOne({
-      where: {
-        idAccount: accountId,
-        idPerson: personId,
-      },
-    });
-    if (!accountInfo) {
-      throw new NotFoundException();
-    }
+    const accountInfo = await this.getRawAccountInfo(personId, accountId);
     return this.getBankAccountDtoFromEntity(accountInfo);
   }
 
@@ -99,15 +95,10 @@ export class BankAccountService {
     accountId: number,
     transactionDto: CreateTransactionDto,
   ): Promise<BalanceDto> {
-    const accountInfo = await this.bankAccountRepository.findOne({
-      where: {
-        idAccount: accountId,
-        idPerson: personId,
-      },
-    });
-    if (!accountInfo) {
-      throw new NotFoundException();
+    if (transactionDto.amount <= 0) {
+      throw new BadRequestException('Invalid amount value');
     }
+    const accountInfo = await this.getRawAccountInfo(personId, accountId);
     const transaction = new AccountTransaction();
     transaction.amount = transactionDto.amount;
     transaction.idAccount = accountInfo.idAccount;
@@ -123,6 +114,63 @@ export class BankAccountService {
       balance: accountInfo.balance,
       dailyWithDrawLimit: accountInfo.dailyWithdrawLimit,
     } as BalanceDto;
+  }
+
+  async createWithdrawTransaction(
+    personId: number,
+    accountId: number,
+    transactionDto: CreateTransactionDto,
+  ): Promise<BalanceDto> {
+    if (transactionDto.amount <= 0) {
+      throw new BadRequestException('Invalid amount value');
+    }
+    const accountInfo = await this.getRawAccountInfo(personId, accountId);
+    if (transactionDto.amount > accountInfo.dailyWithdrawLimit) {
+      throw new BadRequestException('Requested withdraw value exceeds the daily limit.');
+    }
+    const transactions = await this.accountTransactionRepository.find({
+      where: {
+        idAccount: accountId,
+        transactionDate: MoreThanOrEqual(moment().startOf('day').toISOString()),
+      },
+    });
+    if (!!transactions) {
+      const dailyTotal = transactions.reduce((acc, transaction) => acc + Number(transaction.amount), 0);
+      if (dailyTotal >= accountInfo.dailyWithdrawLimit) {
+        throw new BadRequestException('Daily withdraw limit reached. Try again tomorrow');
+      }
+      if (dailyTotal + transactionDto.amount > accountInfo.dailyWithdrawLimit) {
+        throw new BadRequestException('The amount requested will exceed the daily limit.');
+      }
+    }
+    const transaction = new AccountTransaction();
+    transaction.amount = transactionDto.amount;
+    transaction.idAccount = accountInfo.idAccount;
+
+    // Update balance
+    accountInfo.balance = accountInfo.balance - transactionDto.amount;
+    await getManager().transaction(async (transactionalEntityManager) => {
+      await transactionalEntityManager.save(transaction);
+      await transactionalEntityManager.save(accountInfo);
+    });
+
+    return {
+      balance: accountInfo.balance,
+      dailyWithDrawLimit: accountInfo.dailyWithdrawLimit,
+    } as BalanceDto;
+  }
+
+  private async getRawAccountInfo(personId: number, accountId: number): Promise<BankAccount> {
+    const accountInfo = await this.bankAccountRepository.findOne({
+      where: {
+        idAccount: accountId,
+        idPerson: personId,
+      },
+    });
+    if (!accountInfo) {
+      throw new NotFoundException();
+    }
+    return accountInfo;
   }
 
   private getBankAccountDtoFromEntity(bankAccount: BankAccount): BankAccountDto {
