@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { Module } from '@nestjs/common';
 import { BankAccountService } from './bank-account.service';
 import { BankAccountController } from './bank-account.controller';

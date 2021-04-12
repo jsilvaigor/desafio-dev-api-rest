@@ -1,4 +1,4 @@
-import { configureEnvironmentVars } from '../../utils/environ';
+import { configureEnvironmentVars } from '../environ';
 
 describe('Environment variables validation', () => {
   let envVars: any;
@@ -17,6 +17,7 @@ describe('Environment variables validation', () => {
       PGSQL_PORT: '5432',
       PGSQL_DATABASE: 'db',
       SALTS_OR_ROUNDS: '10',
+      JWT_SECRET: 'secret',
     };
   });
 
@@ -33,6 +34,7 @@ describe('Environment variables validation', () => {
       PGSQL_PORT: 5432,
       PGSQL_DATABASE: 'db',
       SALTS_OR_ROUNDS: 10,
+      JWT_SECRET: 'secret',
     };
     const validated = configureEnvironmentVars(envVars);
     expect(validated).toEqual(expected);
