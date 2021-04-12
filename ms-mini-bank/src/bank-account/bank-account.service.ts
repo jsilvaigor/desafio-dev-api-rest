@@ -142,6 +142,9 @@ export class BankAccountService {
     if (transactionDto.amount > accountInfo.dailyWithdrawLimit) {
       throw new BadRequestException('Requested withdraw value exceeds the daily limit.');
     }
+    if (transactionDto.amount > accountInfo.balance) {
+      throw new BadRequestException('Requested withdraw value exceeds your balance.');
+    }
     const transactions = await this.accountTransactionRepository.find({
       where: {
         idAccount: accountId,
