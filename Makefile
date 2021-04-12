@@ -6,8 +6,9 @@ create_netwotk:
 	@echo "Creating network mini_bank_network"
 	./scripts/create_docker_network.sh
 
-app: create_netwotk
-	@echo "Execute Applications"
+app: db
+	@echo "Execute Application"
+	./scripts/create_app.sh
 
 db: create_netwotk
 	@echo "Creating database"

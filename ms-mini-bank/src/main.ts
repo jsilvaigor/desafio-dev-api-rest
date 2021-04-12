@@ -5,6 +5,7 @@ import envVars from './utils/environ';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as helmet from 'helmet';
 import { ValidationPipe } from '@nestjs/common';
+import * as morgan from 'morgan';
 
 async function bootstrap() {
   // Initialize and validate environment variables
@@ -13,6 +14,7 @@ async function bootstrap() {
   app.use(helmet());
   app.setGlobalPrefix(envVars.APPLICATION_PREFIX);
   app.useGlobalPipes(new ValidationPipe());
+  app.use(morgan('common'));
 
   const config = new DocumentBuilder()
     .setTitle('MS Mini Bank')

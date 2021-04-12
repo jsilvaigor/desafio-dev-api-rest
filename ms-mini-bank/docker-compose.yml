@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  mini-bank:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    env_file:
+      - .env
+    environment:
+      - PGSQL_HOST=postgres
+    ports:
+    - "3000:3000"
+    networks:
+      - mini_bank
+
+networks:
+  mini_bank:
+    external:
+      name: mini_bank_network
