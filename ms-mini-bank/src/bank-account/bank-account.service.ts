@@ -107,6 +107,9 @@ export class BankAccountService {
       throw new BadRequestException('Invalid amount value');
     }
     const accountInfo = await this.getRawAccountInfo(personId, accountId);
+    if (!accountInfo.isActive) {
+      throw new BadRequestException('Transactions on inactive accounts are forbidden');
+    }
     const transaction = new AccountTransaction();
     transaction.amount = transactionDto.amount;
     transaction.idAccount = accountInfo.idAccount;
@@ -133,6 +136,9 @@ export class BankAccountService {
       throw new BadRequestException('Invalid amount value');
     }
     const accountInfo = await this.getRawAccountInfo(personId, accountId);
+    if (!accountInfo.isActive) {
+      throw new BadRequestException('Transactions on inactive accounts are forbidden');
+    }
     if (transactionDto.amount > accountInfo.dailyWithdrawLimit) {
       throw new BadRequestException('Requested withdraw value exceeds the daily limit.');
     }
