@@ -1,6 +1,6 @@
 import { Body, Controller, Get, HttpCode, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { BankAccountService } from './bank-account.service';
-import { BalanceDto, BankAccountDto, CreateBankAccountDto } from './bank-account.dto';
+import { BalanceDto, BankAccountDto, CreateBankAccountDto, TransactionDto } from './bank-account.dto';
 import { JwtAuthGuard } from '../login/jwt.guard';
 import {
   ApiBearerAuth,
@@ -42,6 +42,15 @@ export class BankAccountController {
   @ApiOkResponse({ description: 'Account balance', type: BalanceDto })
   getAccountBalance(@Param('person_id') personId: number, @Param('account_id') accountId: number): Promise<BalanceDto> {
     return this.bankAccountService.getAccountBalance(personId, accountId);
+  }
+
+  @Get(':account_id/transactions')
+  @ApiOkResponse({ description: 'All account transactions', type: [TransactionDto] })
+  getAllTransactions(
+    @Param('person_id') personId: number,
+    @Param('account_id') accountId: number,
+  ): Promise<TransactionDto[]> {
+    return this.bankAccountService.getAccountTransactions(personId, accountId);
   }
 
   @Patch(':account_id/block')

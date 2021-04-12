@@ -39,3 +39,12 @@ export class BalanceDto {
   @ApiProperty()
   dailyWithDrawLimit: number;
 }
+
+export class TransactionDto {
+  @ApiProperty()
+  idTransaction: number;
+  @ApiProperty()
+  amount: number;
+  @ApiProperty()
+  transactionDate: Date;
+}

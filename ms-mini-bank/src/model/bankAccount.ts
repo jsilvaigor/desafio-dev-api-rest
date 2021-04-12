@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ColumnNumericTransformer } from '../utils/typeorm.config';
+import { AccountTransaction } from './accountTransaction';
 
 export enum BankAccountType {
   // Conta Corrente
@@ -21,7 +22,7 @@ export class BankAccount {
     type: 'numeric',
     precision: 16,
     scale: 2,
-    transformer: new ColumnNumericTransformer(),
+    transformer: ColumnNumericTransformer,
   })
   balance: number;
 
@@ -30,7 +31,7 @@ export class BankAccount {
     type: 'numeric',
     precision: 16,
     scale: 2,
-    transformer: new ColumnNumericTransformer(),
+    transformer: ColumnNumericTransformer,
   })
   dailyWithdrawLimit: number;
 
@@ -42,4 +43,8 @@ export class BankAccount {
 
   @CreateDateColumn({ name: 'dataCriacao' })
   creationDate: Date;
+
+  @OneToMany(() => AccountTransaction, (accountTransaction) => accountTransaction.bankAccount)
+  @JoinColumn()
+  accountTransactions: AccountTransaction[];
 }

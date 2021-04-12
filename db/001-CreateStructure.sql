@@ -46,7 +46,7 @@ CREATE TABLE public.contas (
     "limiteSaqueDiario" numeric(16,2) DEFAULT 0,
     "flagAtivo" boolean DEFAULT true NOT NULL,
     "tipoConta" integer NOT NULL,
-    "dataCriacao" date DEFAULT CURRENT_DATE NOT NULL
+    "dataCriacao" date DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -127,7 +127,7 @@ CREATE TABLE public.transacoes (
     "idTransacao" integer NOT NULL,
     "idConta" integer NOT NULL,
     valor numeric(16,2) NOT NULL,
-    "dataTransacao" date DEFAULT CURRENT_DATE NOT NULL
+    "dataTransacao" date DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -199,7 +199,6 @@ COPY public.contas ("idConta", "idPessoa", saldo, "limiteSaqueDiario", "flagAtiv
 --
 
 COPY public.pessoas ("idPessoa", nome, cpf, "dataNascimento", senha) FROM stdin;
-1	user 2	123456789	2021-04-11	$2b$10$Sy1xGUNLqToYn.Y9C.wFsuiE86do9ifS/SwiinTMRUCJQ9AH2Za3a
 \.
 
 

@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BankAccount, BankAccountType } from '../model/bankAccount';
 import { Repository } from 'typeorm';
-import { BalanceDto, BankAccountDto, CreateBankAccountDto } from './bank-account.dto';
+import { BalanceDto, BankAccountDto, CreateBankAccountDto, TransactionDto } from './bank-account.dto';
 
 @Injectable()
 export class BankAccountService {
@@ -65,6 +65,26 @@ export class BankAccountService {
       throw new NotFoundException();
     }
     return true;
+  }
+
+  async getAccountTransactions(personId: number, accountId: number): Promise<TransactionDto[]> {
+    const accountInfo = await this.bankAccountRepository.findOne({
+      where: {
+        idAccount: accountId,
+        idPerson: personId,
+      },
+      relations: ['accountTransactions'],
+    });
+    if (!accountInfo) {
+      throw new NotFoundException();
+    }
+    return accountInfo.accountTransactions.map((transaction) => {
+      return {
+        idTransaction: transaction.idTransaction,
+        transactionDate: transaction.transactionDate,
+        amount: transaction.amount,
+      } as TransactionDto;
+    });
   }
 
   private getBankAccountDtoFromEntity(bankAccount: BankAccount): BankAccountDto {
