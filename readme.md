@@ -36,3 +36,16 @@ O projeto está configurado com um [Makefile](https://www.gnu.org/software/make/
 - **make clean**
 
     - Exclui todos os containers relacionados, todas as dependências e arquivos temporários
+
+
+### Acessando a aplicação
+
+Para instruções de execução da aplicação em ambiente local consultar o `readme.md` incluso no diretório da mesma ou executar o comando `make app`.
+
+Por padrão a aplicação é executada na porta `3000` e a documentação da api pode ser acessada por `http://localhost:3000/docs`. 
+
+O comando de criação do banco de dados cria apenas a estrutura, a entidade Pessoa (que é requerida nas instruções) pode ser inserida por lá. 
+
+A maioria dos endpoints requer um token jwt, o mesmo pode ser gerado na documentação com as credenciais utilizadas ao criar a pessoa.
+
+Endpoints que retornam informações sensíveis estão protegidas por um segundo nível de autorização, onde o `person_id` enviado é comparado com o `sub` do token, após o token ser validado.

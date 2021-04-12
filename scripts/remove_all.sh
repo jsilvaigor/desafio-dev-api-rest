@@ -8,5 +8,8 @@ docker-compose -f ../db/docker-compose.yml down
 echo "Removing database volume"
 docker volume rm db_database
 
+echo "Removing ms-mini-bank"
+docker-compose -f ../ms-mini-bank/docker-compose.yml down --rmi local
+
 echo "Removing mini_bank_network"
 docker network rm mini_bank_network || true
