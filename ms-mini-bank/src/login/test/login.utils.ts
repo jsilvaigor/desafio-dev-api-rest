@@ -8,6 +8,7 @@ import { LoginController } from '../login.controller';
 import { LoginService } from '../login.service';
 import { JwtStrategy } from '../jwt.strategy';
 import { TypeOrmForTest } from '../../test/test.utils';
+import { getRepository } from 'typeorm';
 
 export function getLoginTestingModule(): Promise<TestingModule> {
   return Test.createTestingModule({
@@ -23,4 +24,9 @@ export function getLoginTestingModule(): Promise<TestingModule> {
     controllers: [LoginController],
     providers: [LoginService, JwtStrategy],
   }).compile();
+}
+
+export async function getPersonCpfToLogin(): Promise<string> {
+  const person = await getRepository<Person>(Person).findOne({ name: 'test_person' });
+  return person.cpf;
 }

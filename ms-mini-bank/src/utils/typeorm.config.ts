@@ -14,6 +14,7 @@ export default function getTypeOrmConfig(): TypeOrmModuleOptions {
     database: envVars.PGSQL_DATABASE,
     entities: [Person, BankAccount, AccountTransaction],
     synchronize: false,
+    keepConnectionAlive: true,
   };
 }
 
