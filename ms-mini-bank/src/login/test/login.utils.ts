@@ -9,6 +9,7 @@ import { LoginService } from '../login.service';
 import { JwtStrategy } from '../jwt.strategy';
 import { TypeOrmForTest } from '../../test/test.utils';
 import { getRepository } from 'typeorm';
+import faker from 'faker';
 
 export function getLoginTestingModule(): Promise<TestingModule> {
   return Test.createTestingModule({
@@ -27,6 +28,17 @@ export function getLoginTestingModule(): Promise<TestingModule> {
 }
 
 export async function getPersonCpfToLogin(): Promise<string> {
-  const person = await getRepository<Person>(Person).findOne({ name: 'test_person' });
-  return person.cpf;
+  const repository = getRepository<Person>(Person);
+  const testPerson = await repository.findOne({ name: 'test_person' });
+  if (!!testPerson) {
+    return testPerson.cpf;
+  } else {
+    const person = new Person();
+    person.cpf = '123456' + faker.datatype.number(9999);
+    person.name = 'test_person';
+    person.birthDate = faker.datatype.datetime();
+    person.password = 'simple123';
+    const saved = await repository.save(person);
+    return saved.cpf;
+  }
 }
