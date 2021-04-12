@@ -16,6 +16,7 @@ db: create_netwotk
 
 stop:
 	@echo "Stoping containers"
+	./scripts/stop_all.sh
 
 clean:
 	@echo "Remove all dependencies"
