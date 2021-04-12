@@ -1,8 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BankAccount, BankAccountType } from '../model/bankAccount';
-import { Repository } from 'typeorm';
-import { BalanceDto, BankAccountDto, CreateBankAccountDto, TransactionDto } from './bank-account.dto';
+import { getManager, Repository } from 'typeorm';
+import {
+  BalanceDto,
+  BankAccountDto,
+  CreateBankAccountDto,
+  CreateTransactionDto,
+  TransactionDto,
+} from './bank-account.dto';
+import { AccountTransaction } from '../model/accountTransaction';
 
 @Injectable()
 export class BankAccountService {
@@ -85,6 +92,37 @@ export class BankAccountService {
         amount: transaction.amount,
       } as TransactionDto;
     });
+  }
+
+  async createDepositTransaction(
+    personId: number,
+    accountId: number,
+    transactionDto: CreateTransactionDto,
+  ): Promise<BalanceDto> {
+    const accountInfo = await this.bankAccountRepository.findOne({
+      where: {
+        idAccount: accountId,
+        idPerson: personId,
+      },
+    });
+    if (!accountInfo) {
+      throw new NotFoundException();
+    }
+    const transaction = new AccountTransaction();
+    transaction.amount = transactionDto.amount;
+    transaction.idAccount = accountInfo.idAccount;
+
+    // Update balance
+    accountInfo.balance = accountInfo.balance + transactionDto.amount;
+    await getManager().transaction(async (transactionalEntityManager) => {
+      await transactionalEntityManager.save(transaction);
+      await transactionalEntityManager.save(accountInfo);
+    });
+
+    return {
+      balance: accountInfo.balance,
+      dailyWithDrawLimit: accountInfo.dailyWithdrawLimit,
+    } as BalanceDto;
   }
 
   private getBankAccountDtoFromEntity(bankAccount: BankAccount): BankAccountDto {

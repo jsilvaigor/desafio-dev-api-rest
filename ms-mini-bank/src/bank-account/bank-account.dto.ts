@@ -48,3 +48,8 @@ export class TransactionDto {
   @ApiProperty()
   transactionDate: Date;
 }
+
+export class CreateTransactionDto {
+  @ApiProperty()
+  amount: number;
+}
