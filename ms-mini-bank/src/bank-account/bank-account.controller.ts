@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { BankAccountService } from './bank-account.service';
 import {
   BalanceDto,
@@ -15,6 +15,7 @@ import {
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -53,11 +54,15 @@ export class BankAccountController {
 
   @Get(':account_id/transactions')
   @ApiOkResponse({ description: 'All account transactions', type: [TransactionDto] })
+  @ApiQuery({ name: 'start_date', required: false })
+  @ApiQuery({ name: 'end_date', required: false })
   getAllTransactions(
     @Param('person_id') personId: number,
     @Param('account_id') accountId: number,
+    @Query('start_date') startDate?: Date,
+    @Query('end_date') endDate?: Date,
   ): Promise<TransactionDto[]> {
-    return this.bankAccountService.getAccountTransactions(personId, accountId);
+    return this.bankAccountService.getAccountTransactions(personId, accountId, { startDate, endDate });
   }
 
   @Patch(':account_id/block')

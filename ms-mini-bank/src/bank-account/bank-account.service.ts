@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BankAccount, BankAccountType } from '../model/bankAccount';
-import { getManager, MoreThanOrEqual, Repository } from "typeorm";
+import { Between, getManager, LessThanOrEqual, MoreThanOrEqual, QueryBuilder, Repository } from 'typeorm';
 import {
   BalanceDto,
   BankAccountDto,
@@ -11,6 +11,11 @@ import {
 } from './bank-account.dto';
 import { AccountTransaction } from '../model/accountTransaction';
 import * as moment from 'moment';
+
+export interface DateFilter {
+  startDate?: Date;
+  endDate?: Date;
+}
 
 @Injectable()
 export class BankAccountService {
@@ -70,11 +75,14 @@ export class BankAccountService {
     return true;
   }
 
-  async getAccountTransactions(personId: number, accountId: number): Promise<TransactionDto[]> {
+  async getAccountTransactions(personId: number, accountId: number, filter: DateFilter): Promise<TransactionDto[]> {
     const accountInfo = await this.bankAccountRepository.findOne({
-      where: {
-        idAccount: accountId,
-        idPerson: personId,
+      join: { alias: 'account', innerJoin: { transactions: 'account.accountTransactions' } },
+      where: (qb) => {
+        qb.where({
+          idAccount: accountId,
+          idPerson: personId,
+        }).andWhere(...this.createDateFilter(filter));
       },
       relations: ['accountTransactions'],
     });
@@ -182,5 +190,20 @@ export class BankAccountService {
       isActive: bankAccount.isActive,
       creationDate: bankAccount.creationDate,
     } as BankAccountDto;
+  }
+
+  createDateFilter({ startDate, endDate }: DateFilter) {
+    const from = moment(startDate).startOf('day').toISOString();
+    const to = moment(endDate).endOf('day').toISOString();
+    if (!!startDate && !!endDate) {
+      return ['transactions.dataTransacao BETWEEN :from AND :to', { from, to }];
+    } else if (!!startDate) {
+      return ['transactions.dataTransacao >= :from ', { from }];
+    } else if (!!endDate) {
+      return ['transactions.dataTransacao <= :to ', { to }];
+    }
+
+    // FIXME: Remove this hack. Inspiration https://github.com/typeorm/typeorm/issues/3103#issuecomment-490805889
+    return ['1=1'];
   }
 }
