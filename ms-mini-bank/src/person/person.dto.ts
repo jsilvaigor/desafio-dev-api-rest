@@ -1,5 +1,6 @@
 import { IsDateString, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsCpf } from '../utils/validation.utils';
 
 export class PersonDto {
   @ApiProperty()
@@ -19,12 +20,13 @@ export class PersonCreateDto {
 
   @ApiProperty()
   @IsNotEmpty()
+  @IsCpf()
   cpf: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsDateString()
-  birthDate: Date;
+  birthDate: string;
 
   @ApiProperty()
   @IsNotEmpty()

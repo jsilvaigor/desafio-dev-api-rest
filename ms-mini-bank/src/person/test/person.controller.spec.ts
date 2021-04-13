@@ -5,6 +5,7 @@ import { Person } from '../../model/person';
 import * as faker from 'faker';
 import { PersonCreateDto } from '../person.dto';
 import * as moment from 'moment';
+import * as cpf from '@fnando/cpf';
 
 describe('PersonController', () => {
   let controller: PersonController;
@@ -12,7 +13,7 @@ describe('PersonController', () => {
 
   beforeAll(async () => {
     person = new Person();
-    person.cpf = '123456' + faker.datatype.number(9999);
+    person.cpf = cpf.generate();
     person.name = 'test_person';
     person.birthDate = faker.datatype.datetime();
     person.password = 'simple123';

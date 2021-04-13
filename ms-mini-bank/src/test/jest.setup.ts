@@ -1,9 +1,9 @@
-import { TypeOrmForTest } from './test.utils';
+import { TestUtils } from './test.utils';
 
 beforeAll(async () => {
-  TypeOrmForTest.getInstance();
-  await TypeOrmForTest.getConnection();
+  TestUtils.getInstance();
+  await TestUtils.getConnection();
 });
 afterAll(() => {
-  return TypeOrmForTest.closeConnection();
+  return TestUtils.closeConnection();
 });

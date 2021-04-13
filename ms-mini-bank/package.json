@@ -21,6 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@fnando/cpf": "^1.0.2",
     "@hapi/joi": "^17.1.1",
     "@nestjs/common": "^7.6.15",
     "@nestjs/core": "^7.6.15",

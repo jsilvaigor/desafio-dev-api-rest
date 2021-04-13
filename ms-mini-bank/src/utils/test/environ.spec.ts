@@ -41,6 +41,9 @@ describe('Environment variables validation', () => {
   });
 
   describe('exception validation', () => {
+    it('should throw', () => {
+      expect(() => configureEnvironmentVars({})).toThrow();
+    });
     it('no pgsql_user', () => {
       delete envVars.PGSQL_USER;
       expect(() => configureEnvironmentVars(envVars)).toThrowError('Config validation error: "PGSQL_USER" is required');
