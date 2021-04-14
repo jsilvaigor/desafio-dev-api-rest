@@ -32,7 +32,7 @@ describe('PersonController', () => {
     const personDto: PersonCreateDto = {
       cpf: person.cpf,
       name: person.name,
-      birthDate: person.birthDate,
+      birthDate: person.birthDate.toISOString(),
       password: person.password,
     };
     const saved = await controller.createPerson(personDto);
@@ -42,7 +42,7 @@ describe('PersonController', () => {
     person.idPerson = saved.id;
     expect(saved.cpf).toBe(personDto.cpf);
     expect(saved.name).toBe(personDto.name);
-    expect(saved.birthDate).toBe(personDto.birthDate);
+    expect(saved.birthDate.toISOString()).toBe(personDto.birthDate);
   });
 
   it('should return a list of persons', async () => {

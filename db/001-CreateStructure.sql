@@ -127,7 +127,8 @@ CREATE TABLE public.transacoes (
     "idTransacao" integer NOT NULL,
     "idConta" integer NOT NULL,
     valor numeric(16,2) NOT NULL,
-    "dataTransacao" date DEFAULT CURRENT_TIMESTAMP NOT NULL
+    "dataTransacao" date DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "tipoTransacao" integer NOT NULL
 );
 
 
@@ -208,7 +209,7 @@ COPY public.pessoas ("idPessoa", nome, cpf, "dataNascimento", senha) FROM stdin;
 -- Data for Name: transacoes; Type: TABLE DATA; Schema: public; Owner: master_user
 --
 
-COPY public.transacoes ("idTransacao", "idConta", valor, "dataTransacao") FROM stdin;
+COPY public.transacoes ("idTransacao", "idConta", valor, "dataTransacao", "tipoTransacao") FROM stdin;
 \.
 
 

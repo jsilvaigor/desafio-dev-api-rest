@@ -4,6 +4,7 @@ import { Person } from '../model/person';
 import { Repository } from 'typeorm';
 import { PersonCreateDto, PersonDto } from './person.dto';
 import { hashPassword } from '../utils/password.utils';
+import * as moment from 'moment';
 
 @Injectable()
 export class PersonService {
@@ -23,7 +24,7 @@ export class PersonService {
     const person = new Person();
     person.cpf = createPersonDto.cpf;
     person.name = createPersonDto.name;
-    person.birthDate = createPersonDto.birthDate;
+    person.birthDate = moment(createPersonDto.birthDate).toDate();
     person.password = await hashPassword(createPersonDto.password);
     const saved = await this.personRepository.save(person);
     return this.personEntityToDto(saved);

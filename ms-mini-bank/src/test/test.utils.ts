@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { TypeOrmModule } from '@nestjs/typeorm';
 import getTypeOrmConfig from '../utils/typeorm.config';
 import { DynamicModule } from '@nestjs/common';
@@ -6,8 +7,9 @@ import envVars from '../utils/environ';
 import { Person } from '../model/person';
 import { BankAccount } from '../model/bankAccount';
 import { AccountTransaction } from '../model/accountTransaction';
-import faker from 'faker';
+import * as faker from 'faker';
 import * as cpf from '@fnando/cpf';
+import { hashPassword } from "../utils/password.utils";
 
 export class TestUtils {
   private static typeOrmModule: DynamicModule;
@@ -62,7 +64,7 @@ export class TestUtils {
       person.cpf = cpf.generate();
       person.name = 'test_person';
       person.birthDate = faker.datatype.datetime();
-      person.password = 'simple123';
+      person.password = await hashPassword('simple123');
       return await repository.save(person);
     }
   }

@@ -54,6 +54,8 @@ export class TransactionDto {
   amount: number;
   @ApiProperty()
   transactionDate: Date;
+  @ApiProperty()
+  transactionType: string;
 }
 
 export class CreateTransactionDto {

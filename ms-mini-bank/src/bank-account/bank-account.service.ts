@@ -9,7 +9,7 @@ import {
   CreateTransactionDto,
   TransactionDto,
 } from './bank-account.dto';
-import { AccountTransaction } from '../model/accountTransaction';
+import { AccountTransaction, TransactionType } from '../model/accountTransaction';
 import * as moment from 'moment';
 
 export interface DateFilter {
@@ -45,7 +45,10 @@ export class BankAccountService {
 
   async createAccount(personId: number, createAccountDto: CreateBankAccountDto): Promise<BankAccountDto> {
     const newAccount = new BankAccount();
-    newAccount.accountType = Number(BankAccountType[createAccountDto.accountType]);
+    newAccount.accountType =
+      typeof createAccountDto.accountType === 'string'
+        ? Number(BankAccountType[createAccountDto.accountType])
+        : createAccountDto.accountType;
     newAccount.idPerson = personId;
     newAccount.balance = createAccountDto.balance;
     newAccount.dailyWithdrawLimit = createAccountDto.dailyWithDrawLimit;
@@ -94,6 +97,7 @@ export class BankAccountService {
         idTransaction: transaction.idTransaction,
         transactionDate: transaction.transactionDate,
         amount: transaction.amount,
+        transactionType: TransactionType[transaction.transactionType],
       } as TransactionDto;
     });
   }
@@ -113,9 +117,10 @@ export class BankAccountService {
     const transaction = new AccountTransaction();
     transaction.amount = transactionDto.amount;
     transaction.idAccount = accountInfo.idAccount;
+    transaction.transactionType = TransactionType.DEPOSIT;
 
     // Update balance
-    accountInfo.balance = accountInfo.balance + transactionDto.amount;
+    accountInfo.balance = Number(accountInfo.balance) + transactionDto.amount;
     await getManager().transaction(async (transactionalEntityManager) => {
       await transactionalEntityManager.save(transaction);
       await transactionalEntityManager.save(accountInfo);
@@ -139,30 +144,32 @@ export class BankAccountService {
     if (!accountInfo.isActive) {
       throw new BadRequestException('Transactions on inactive accounts are forbidden');
     }
-    if (transactionDto.amount > accountInfo.dailyWithdrawLimit) {
-      throw new BadRequestException('Requested withdraw value exceeds the daily limit.');
-    }
     if (transactionDto.amount > accountInfo.balance) {
       throw new BadRequestException('Requested withdraw value exceeds your balance.');
+    }
+    if (transactionDto.amount > accountInfo.dailyWithdrawLimit) {
+      throw new BadRequestException('Requested withdraw value exceeds the daily limit.');
     }
     const transactions = await this.accountTransactionRepository.find({
       where: {
         idAccount: accountId,
         transactionDate: MoreThanOrEqual(moment().startOf('day').toISOString()),
+        transactionType: TransactionType.WITHDRAW,
       },
     });
     if (!!transactions) {
       const dailyTotal = transactions.reduce((acc, transaction) => acc + Number(transaction.amount), 0);
-      if (dailyTotal >= accountInfo.dailyWithdrawLimit) {
+      if (dailyTotal >= Number(accountInfo.dailyWithdrawLimit)) {
         throw new BadRequestException('Daily withdraw limit reached. Try again tomorrow');
       }
-      if (dailyTotal + transactionDto.amount > accountInfo.dailyWithdrawLimit) {
+      if (dailyTotal + transactionDto.amount > Number(accountInfo.dailyWithdrawLimit)) {
         throw new BadRequestException('The amount requested will exceed the daily limit.');
       }
     }
     const transaction = new AccountTransaction();
     transaction.amount = transactionDto.amount;
     transaction.idAccount = accountInfo.idAccount;
+    transaction.transactionType = TransactionType.WITHDRAW;
 
     // Update balance
     accountInfo.balance = accountInfo.balance - transactionDto.amount;
@@ -193,8 +200,8 @@ export class BankAccountService {
   private getBankAccountDtoFromEntity(bankAccount: BankAccount): BankAccountDto {
     return {
       accountType: BankAccountType[bankAccount.accountType],
-      balance: bankAccount.balance,
-      dailyWithDrawLimit: bankAccount.dailyWithdrawLimit,
+      balance: Number(bankAccount.balance),
+      dailyWithDrawLimit: Number(bankAccount.dailyWithdrawLimit),
       idAccount: bankAccount.idAccount,
       isActive: bankAccount.isActive,
       creationDate: bankAccount.creationDate,

@@ -1,11 +1,10 @@
 import { TestingModule } from '@nestjs/testing';
 import { LoginController } from '../login.controller';
 import { getLoginTestingModule, getPersonCpfToLogin } from './login.utils';
-import { LoginDto, Token } from '../login.dto';
+import { LoginDto } from '../login.dto';
 import * as jwt from 'jsonwebtoken';
 import envVars from '../../utils/environ';
 import { UnauthorizedException } from '@nestjs/common';
-import { JwtStrategy } from '../jwt.strategy';
 
 describe('LoginController', () => {
   let controller: LoginController;
